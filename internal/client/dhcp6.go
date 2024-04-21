@@ -24,7 +24,7 @@ type DHCP6 struct {
 	numMsgs int
 }
 
-func NewDHCP6(iface string, timeout, numMessages int, debug bool) (*DHCP6, error) {
+func NewDHCP6(iface, brdcstAddr string, timeout, numMessages int, debug bool) (*DHCP6, error) {
 	d := &DHCP6{
 		timeout: time.Duration(timeout) * time.Millisecond,
 		done:    make(chan struct{}),
@@ -39,6 +39,15 @@ func NewDHCP6(iface string, timeout, numMessages int, debug bool) (*DHCP6, error
 	d.iface = realIface
 
 	var opts []nclient6.ClientOpt
+
+	if brdcstAddr != "" {
+		addr, err := net.LookupUDPAddr("udp6", net.JoinHostPort(brdcstAddr, "0"))
+		if err != nil {
+			return nil, err
+		}
+
+		opts = append(opts, nclient6.WithBroadcastAddr(addr))
+	}
 
 	if debug {
 		opts = append(opts, nclient6.WithDebugLogger())

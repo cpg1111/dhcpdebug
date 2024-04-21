@@ -17,6 +17,7 @@ type cmdArgs struct {
 	ClientPort  int
 	Host        string
 	Port        int
+	BrdcstAddr  string
 	Proto       int
 	NumMessages int
 	Release     bool
@@ -43,6 +44,7 @@ func run(args cmdArgs) int {
 	} else {
 		c, err = client.NewDHCP6(
 			args.Iface,
+			args.BrdcstAddr,
 			args.Timeout,
 			args.NumMessages,
 			args.Debug,
@@ -84,6 +86,7 @@ func main() {
 	flag.IntVar(&args.Port, "client-port", 0, "unicast source port")
 	flag.StringVar(&args.Host, "host", "", "destination server host")
 	flag.IntVar(&args.Port, "port", 67, "destination server port")
+	flag.StringVar(&args.BrdcstAddr, "broadcast-addr", "", "dhcp6 broadcast address")
 	flag.IntVar(&args.Proto, "proto", 4, "DHCP protocol version, either 4 or 6")
 	flag.IntVar(&args.NumMessages, "num-msg", 4, "Number of messages to use for DHCP6")
 	flag.BoolVar(&args.Release, "release", false, "whether to immediately release IP")
