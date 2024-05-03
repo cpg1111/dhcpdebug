@@ -41,7 +41,7 @@ func NewDHCP6(iface, brdcstAddr string, timeout, numMessages int, debug bool) (*
 	var opts []nclient6.ClientOpt
 
 	if brdcstAddr != "" {
-		addr, err := net.LookupUDPAddr("udp6", net.JoinHostPort(brdcstAddr, "0"))
+		addr, err := net.ResolveUDPAddr("udp6", net.JoinHostPort(brdcstAddr, "67"))
 		if err != nil {
 			return nil, err
 		}
@@ -85,6 +85,7 @@ func (d *DHCP6) exchange(ctx context.Context, release bool) error {
 		}
 
 		fmt.Printf("%+v\n", adv)
+		fmt.Printf("%+v\n", adv.Options)
 
 		rCtx, rCancel := context.WithTimeout(ctx, Request6Timeout)
 		defer rCancel()
